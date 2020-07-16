@@ -1,5 +1,6 @@
 const express = require("express");
-const Student = require("../models/Student");
+const Project = require("../../models/Project");
+const Student = require("../../models/Student");
 const router = express.Router();
 const Sequelize = require("sequelize");
 
@@ -7,24 +8,10 @@ router
   .route("/")
   .get(async (req, res) => {
     try {
-      const { query } = req;
+      let result = await Project.findAll({ include: Student });
 
-      const page = query.page;
-      delete query.page;
-      let querySql = {};
-      let params = [];
-      for (let key in query) {
-        params.push(query[key]);
-        querySql[key] = { [Sequelize.Op.iLike]: `%${query[key]}%` };
-      }
-      let result = await Student.findAll({ where: { ...querySql } });
-      let numberOfStudent = await Student.findAndCountAll();
-      console.log(numberOfStudent);
       res.send({
         data: result,
-        currentPage: page,
-        pages: Math.ceil(parseInt(numberOfStudent.count) / 10),
-        results: parseInt(numberOfStudent.count),
       });
     } catch (e) {
       console.log(e);
@@ -33,7 +20,8 @@ router
   })
   .post(async (req, res) => {
     try {
-      res.send(await Student.create(req.body));
+      let result = await Project.create(req.body);
+      res.send(result);
     } catch (e) {
       console.log(e);
       res.status(404).send(e);
@@ -43,13 +31,14 @@ router
   .route("/:id")
   .get(async (req, res) => {
     try {
-      res.send(
-        await Student.findOne({
+      res.send({
+        data: await Project.findOne({
           where: {
             _id: req.params.id,
           },
-        })
-      );
+          include: Student,
+        }),
+      });
     } catch (e) {
       console.log(e);
       res.status(404).send(e);
@@ -59,7 +48,7 @@ router
     try {
       delete req.body._id;
       res.send(
-        await Student.update(
+        await Project.update(
           { ...req.body },
           {
             where: {
@@ -75,7 +64,7 @@ router
   })
   .delete(async (req, res) => {
     try {
-      let result = await Student.destroy({
+      let result = await Project.destroy({
         where: {
           _id: req.params.id,
         },
