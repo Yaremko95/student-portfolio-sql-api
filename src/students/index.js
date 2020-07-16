@@ -1,12 +1,31 @@
 const express = require("express");
 const Student = require("../models/Student");
 const router = express.Router();
+const Sequelize = require("sequelize");
 
 router
   .route("/")
   .get(async (req, res) => {
     try {
-      res.send(await Student.findAll());
+      const { query } = req;
+
+      const page = query.page;
+      delete query.page;
+      let querySql = {};
+      let params = [];
+      for (let key in query) {
+        params.push(query[key]);
+        querySql[key] = { [Sequelize.Op.iLike]: `%${query[key]}%` };
+      }
+      let result = await Student.findAll({ where: { ...querySql } });
+      let numberOfStudent = await Student.findAndCountAll();
+      console.log(numberOfStudent);
+      res.send({
+        data: result,
+        currentPage: page,
+        pages: Math.ceil(parseInt(numberOfStudent.count) / 10),
+        results: parseInt(numberOfStudent.count),
+      });
     } catch (e) {
       console.log(e);
       res.status(404).send(e);
