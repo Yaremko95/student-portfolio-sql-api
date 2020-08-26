@@ -19,6 +19,10 @@ const User = orm.define(
       type: Sequelize.STRING,
       allowNull: false,
     },
+    refresh_tokens: {
+      type: Sequelize.ARRAY(Sequelize.STRING),
+      allowNull: true,
+    },
   },
   {
     timestamps: false,
