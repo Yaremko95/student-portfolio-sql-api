@@ -2,7 +2,7 @@ const orm = require("../db");
 const Sequelize = require("sequelize");
 const Student = require("./Student");
 const Project = orm.define(
-  "Projects",
+  "projects",
   {
     _id: {
       type: Sequelize.NUMBER,
@@ -34,6 +34,10 @@ const Project = orm.define(
     timestamps: false,
   }
 );
-Project.belongsTo(Student, { foreignKey: "studentId" });
+// Project.belongsTo(Student, { foreignKey: "studentId" });
+// Student.hasMany(Project, { foreignKey: "studentId" });
+// Project.belongsTo(Student, { foreignKey: "studentId" });
+//Student.hasMany(Project);
+// Project.belongsTo(Student, { foreignKey: "studentId" });
 
 module.exports = Project;

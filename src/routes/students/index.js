@@ -1,5 +1,6 @@
 const express = require("express");
 const Student = require("../../models/Student");
+const Project = require("../../models/Project");
 const router = express.Router();
 const Sequelize = require("sequelize");
 
@@ -19,15 +20,17 @@ router
       }
       let result = await Student.findAll({
         where: { ...querySql },
-        limit: 1,
-        offset: 1 * page,
+        // limit: 10,
+        // offset: 10 * page,
+        include: Project,
       });
+      console.log(result);
       let numberOfStudent = await Student.findAndCountAll();
       console.log(numberOfStudent);
       res.send({
         data: result,
         currentPage: page,
-        pageCount: Math.ceil(parseInt(numberOfStudent.count) / 1),
+        pageCount: Math.ceil(parseInt(numberOfStudent.count) / 10),
         results: parseInt(numberOfStudent.count),
       });
     } catch (e) {
@@ -47,13 +50,13 @@ router
   .route("/:id")
   .get(async (req, res) => {
     try {
-      res.send(
-        await Student.findOne({
+      res.send({
+        data: await Student.findOne({
           where: {
             _id: req.params.id,
           },
-        })
-      );
+        }),
+      });
     } catch (e) {
       console.log(e);
       res.status(404).send(e);

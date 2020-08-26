@@ -8,7 +8,9 @@ router
   .route("/")
   .get(async (req, res) => {
     try {
-      let result = await Project.findAll({ include: Student });
+      let result = await Project.findAll({
+        include: Student,
+      });
 
       res.send({
         data: result,
@@ -36,7 +38,7 @@ router
           where: {
             _id: req.params.id,
           },
-          include: Student,
+          //include: Student,
         }),
       });
     } catch (e) {

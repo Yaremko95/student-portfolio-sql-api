@@ -1,8 +1,8 @@
 const orm = require("../db");
 const Sequelize = require("sequelize");
-
+const Project = require("./Project");
 const Student = orm.define(
-  "Students",
+  "students",
   {
     _id: {
       type: Sequelize.NUMBER,
@@ -21,6 +21,10 @@ const Student = orm.define(
       type: Sequelize.STRING,
       allowNull: false,
     },
+    image: {
+      type: Sequelize.STRING,
+      allowNull: true,
+    },
     dateOfBirth: {
       type: Sequelize.STRING,
       allowNull: false,
@@ -30,5 +34,7 @@ const Student = orm.define(
     timestamps: false,
   }
 );
+Student.hasMany(Project, { foreignKey: "studentId" });
+Project.belongsTo(Student, { foreignKey: "studentId" });
 
 module.exports = Student;
