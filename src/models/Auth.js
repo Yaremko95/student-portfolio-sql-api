@@ -17,10 +17,20 @@ const User = orm.define(
     },
     password: {
       type: Sequelize.STRING,
-      allowNull: false,
+      allowNull: true,
+      validate: function (value) {
+        if (value === null && this.googleid === null) {
+          throw new Error("Please provide password");
+        }
+      },
     },
     refresh_tokens: {
       type: Sequelize.ARRAY(Sequelize.STRING),
+      allowNull: true,
+      defaultValue: [],
+    },
+    googleid: {
+      type: Sequelize.STRING,
       allowNull: true,
     },
   },
